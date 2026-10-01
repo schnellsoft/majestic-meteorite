@@ -1,0 +1,123 @@
+---
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import Layout from '../../layouts/Layout.astro';
+
+type Dog = {
+	name: string;
+	age: number;
+	race: string;
+	health: string;
+	details: string;
+};
+
+type Props = {
+	dog: Dog;
+};
+
+export function getStaticPaths() {
+	const dogsFile = resolve(process.cwd(), 'public/dogs.json');
+	const dogs = JSON.parse(readFileSync(dogsFile, 'utf8')) as Dog[];
+
+	return dogs.map((dog) => ({
+		params: {
+			slug: dog.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+		},
+		props: { dog },
+	}));
+}
+
+const { dog } = Astro.props as Props;
+---
+
+<Layout>
+	<main class="dog-detail">
+		<a class="dog-detail__back" href="/">&larr; All dogs</a>
+		<article>
+			<p class="dog-detail__eyebrow">Dog profile</p>
+			<h1>{dog.name}</h1>
+			<p class="dog-detail__breed">{dog.race} <span aria-hidden="true">/</span> {dog.age} {dog.age === 1 ? 'year' : 'years'} old</p>
+			<p class="dog-detail__health">{dog.health}</p>
+			<div class="dog-detail__details">
+				<h2>About {dog.name}</h2>
+				<p>{dog.details}</p>
+			</div>
+		</article>
+	</main>
+</Layout>
+
+<style>
+	.dog-detail {
+		--ink: #182a28;
+		--muted: #596963;
+		--leaf: #315d4d;
+		max-width: 760px;
+		margin: 0 auto;
+		padding: clamp(2rem, 7vw, 6rem) 1.25rem;
+		color: var(--ink);
+		font-family: Georgia, 'Times New Roman', serif;
+	}
+
+	.dog-detail__back {
+		display: inline-block;
+		margin-bottom: 3rem;
+		color: var(--leaf);
+		font: 700 0.9rem/1.5 system-ui, sans-serif;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.2em;
+	}
+
+	.dog-detail__eyebrow {
+		margin: 0 0 0.5rem;
+		color: var(--leaf);
+		font: 700 0.75rem/1.4 system-ui, sans-serif;
+		text-transform: uppercase;
+	}
+
+	h1 {
+		margin: 0;
+		font-size: 3.5rem;
+		font-weight: 500;
+		line-height: 1.05;
+	}
+
+	.dog-detail__breed {
+		margin: 1rem 0 0;
+		color: var(--muted);
+		font: 700 0.95rem/1.5 system-ui, sans-serif;
+	}
+
+	.dog-detail__breed span {
+		padding: 0 0.35rem;
+		color: #a2afa5;
+	}
+
+	.dog-detail__health {
+		margin: 1.5rem 0 0;
+		padding: 1rem 0;
+		border-block: 1px solid #d9e1d8;
+		font: 1rem/1.6 system-ui, sans-serif;
+	}
+
+	.dog-detail__details {
+		margin-top: 2rem;
+	}
+
+	.dog-detail__details h2 {
+		margin: 0 0 0.75rem;
+		font-size: 1.5rem;
+		font-weight: 500;
+	}
+
+	.dog-detail__details p {
+		margin: 0;
+		color: #344541;
+		font: 1.05rem/1.8 system-ui, sans-serif;
+	}
+
+	@media (max-width: 600px) {
+		h1 {
+			font-size: 2.5rem;
+		}
+	}
+</style>

@@ -7,6 +7,7 @@ type Dog = {
 	age: number;
 	race: string;
 	health: string;
+	details: string;
 };
 
 const dogsFile = resolve(process.cwd(), 'public/dogs.json');
@@ -22,12 +23,14 @@ const dogs = JSON.parse(readFileSync(dogsFile, 'utf8')) as Dog[];
 	<ul class="dogs__list" aria-label="Dog profiles">
 		{dogs.map((dog) => (
 			<li class="dogs__item">
-				<div class="dogs__name-row">
-					<h3 class="dogs__name">{dog.name}</h3>
-					<span class="dogs__age">{dog.age} {dog.age === 1 ? 'year' : 'years'}</span>
-				</div>
-				<p class="dogs__breed">{dog.race}</p>
-				<p class="dogs__health">{dog.health}</p>
+				<a class="dogs__link" href={`/dogs/${dog.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}/`}>
+					<div class="dogs__name-row">
+						<h3 class="dogs__name">{dog.name}</h3>
+						<span class="dogs__age">{dog.age} {dog.age === 1 ? 'year' : 'years'}</span>
+					</div>
+					<p class="dogs__breed">{dog.race}</p>
+					<p class="dogs__health">{dog.health}</p>
+				</a>
 			</li>
 		))}
 	</ul>
@@ -84,8 +87,27 @@ const dogs = JSON.parse(readFileSync(dogsFile, 'utf8')) as Dog[];
 
 	.dogs__item {
 		min-width: 0;
-		padding: 1.25rem;
 		background: var(--paper);
+	}
+
+	.dogs__link {
+		display: block;
+		min-height: 100%;
+		padding: 1.25rem;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.dogs__link:hover .dogs__name,
+	.dogs__link:focus-visible .dogs__name {
+		color: var(--leaf);
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+
+	.dogs__link:focus-visible {
+		outline: 2px solid var(--leaf);
+		outline-offset: -3px;
 	}
 
 	.dogs__name-row {

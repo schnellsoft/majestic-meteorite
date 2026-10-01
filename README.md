@@ -1,46 +1,41 @@
-# Astro Starter Kit: Basics
+# Majestic Meteorite
+
+Static Astro site of dog profiles, deployed as a Cloudflare Worker.
+
+Pages are prerendered at build time from `public/dogs.json`. The Cloudflare adapter keeps that prerender in Node so the build can read the file, then Wrangler publishes the static assets.
+
+## Requirements
+
+- Node.js 22.12.0 or newer (`package.json` `engines`)
+- A Cloudflare account
+
+## Commands
+
+| Command | Action |
+| --- | --- |
+| `npm install` | Install dependencies |
+| `npm run dev` | Local dev server at `localhost:4321` |
+| `npm run build` | Production build |
+| `npm run preview` | Build, then preview the Worker locally with Wrangler |
+| `npm run deploy` | Build and deploy with Wrangler |
+
+Log in once before the first deploy:
 
 ```sh
-npm create astro@latest -- --template basics
+npx wrangler login
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Workers Builds
 
-## 🚀 Project Structure
+In the Cloudflare dashboard, import this repository and set:
 
-Inside of your Astro project, you'll see the following folders and files:
+- Build command: `npm run build`
+- Deploy command: `npx wrangler deploy`
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+Use those two commands separately. `npm run deploy` also builds, so it would run the build twice in CI.
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Workers Builds already provides a Node.js version new enough for Astro 7. If you override it, keep Node.js at 22.12.0 or newer.
 
-## 🧞 Commands
+After the first deploy, set `site` in `astro.config.mjs` to the `workers.dev` URL or your custom domain. Canonical links are emitted only when `site` is set.
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Unknown URLs serve `src/pages/404.astro` via `assets.not_found_handling: "404-page"` in `wrangler.jsonc`.

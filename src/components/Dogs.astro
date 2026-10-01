@@ -1,31 +1,34 @@
 ---
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dogSlug, loadDogs } from '../data/dogs';
 
-type Dog = {
-	name: string;
-	age: number;
-	race: string;
-	health: string;
-	details: string;
+const dogs = loadDogs();
+const itemList = {
+	'@context': 'https://schema.org',
+	'@type': 'ItemList',
+	name: 'Our dogs',
+	numberOfItems: dogs.length,
+	itemListElement: dogs.map((dog, index) => ({
+		'@type': 'ListItem',
+		position: index + 1,
+		name: dog.name,
+		description: dog.health,
+	})),
 };
-
-const dogsFile = resolve(process.cwd(), 'public/dogs.json');
-const dogs = JSON.parse(readFileSync(dogsFile, 'utf8')) as Dog[];
 ---
 
 <section class="dogs" aria-labelledby="dogs-heading">
+	<script type="application/ld+json" set:html={JSON.stringify(itemList).replace(/</g, '\\u003c')} />
 	<header class="dogs__header">
 		<p class="dogs__eyebrow">Meet the pack</p>
-		<h2 id="dogs-heading">Our dogs</h2>
+		<h1 id="dogs-heading">Our dogs</h1>
 		<p class="dogs__summary">A little snapshot of each dog's personality and wellbeing.</p>
 	</header>
 	<ul class="dogs__list" aria-label="Dog profiles">
 		{dogs.map((dog) => (
 			<li class="dogs__item">
-				<a class="dogs__link" href={`/dogs/${dog.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}/`}>
+				<a class="dogs__link" href={`/dogs/${dogSlug(dog.name)}/`}>
 					<div class="dogs__name-row">
-						<h3 class="dogs__name">{dog.name}</h3>
+						<h2 class="dogs__name">{dog.name}</h2>
 						<span class="dogs__age">{dog.age} {dog.age === 1 ? 'year' : 'years'}</span>
 					</div>
 					<p class="dogs__breed">{dog.race}</p>
@@ -61,7 +64,7 @@ const dogs = JSON.parse(readFileSync(dogsFile, 'utf8')) as Dog[];
 		text-transform: uppercase;
 	}
 
-	.dogs h2 {
+	.dogs h1 {
 		margin: 0;
 		font-size: 3.5rem;
 		font-weight: 500;
@@ -141,7 +144,7 @@ const dogs = JSON.parse(readFileSync(dogsFile, 'utf8')) as Dog[];
 	}
 
 	@media (max-width: 600px) {
-		.dogs h2 {
+		.dogs h1 {
 			font-size: 2.25rem;
 		}
 	}

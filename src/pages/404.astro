@@ -1,0 +1,53 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = 'This page was not found in the dog profile directory';
+const description =
+	'That page is not in this dog directory. Return to the pack list to browse breed, age, health notes, and a short story for each dog.';
+---
+
+<Layout title={title} description={description}>
+	<main class="missing">
+		<p class="missing__eyebrow">404</p>
+		<h1>This page is not in the directory</h1>
+		<p>The address does not match a dog profile or another page on this site.</p>
+		<a href="/">Back to all dogs</a>
+	</main>
+</Layout>
+
+<style>
+	.missing {
+		max-width: 40rem;
+		margin: 0 auto;
+		padding: clamp(2rem, 7vw, 6rem) 1.25rem;
+		font-family: Georgia, 'Times New Roman', serif;
+	}
+
+	.missing__eyebrow {
+		margin: 0 0 0.5rem;
+		color: #315d4d;
+		font: 700 0.75rem/1.4 system-ui, sans-serif;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	h1 {
+		margin: 0;
+		font-size: clamp(2rem, 5vw, 3rem);
+		font-weight: 500;
+		line-height: 1.1;
+	}
+
+	p {
+		margin: 1rem 0 0;
+		color: #344541;
+		font: 1.05rem/1.7 system-ui, sans-serif;
+	}
+
+	a {
+		display: inline-block;
+		margin-top: 1.5rem;
+		color: #315d4d;
+		font: 700 0.95rem/1.5 system-ui, sans-serif;
+	}
+</style>

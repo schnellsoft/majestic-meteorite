@@ -1,36 +1,36 @@
 ---
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import Layout from '../../layouts/Layout.astro';
-
-type Dog = {
-	name: string;
-	age: number;
-	race: string;
-	health: string;
-	details: string;
-};
+import { dogPageTitle, dogSlug, loadDogs, metaDescription, type Dog } from '../../data/dogs';
 
 type Props = {
 	dog: Dog;
 };
 
 export function getStaticPaths() {
-	const dogsFile = resolve(process.cwd(), 'public/dogs.json');
-	const dogs = JSON.parse(readFileSync(dogsFile, 'utf8')) as Dog[];
-
-	return dogs.map((dog) => ({
-		params: {
-			slug: dog.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
-		},
+	return loadDogs().map((dog) => ({
+		params: { slug: dogSlug(dog.name) },
 		props: { dog },
 	}));
 }
 
 const { dog } = Astro.props as Props;
+const title = dogPageTitle(dog.name, dog.race);
+const description = metaDescription(dog.details);
+const profile = {
+	'@context': 'https://schema.org',
+	'@type': 'ProfilePage',
+	name: dog.name,
+	description,
+	mainEntity: {
+		'@type': 'Thing',
+		name: dog.name,
+		description: dog.health,
+	},
+};
 ---
 
-<Layout>
+<Layout title={title} description={description}>
+	<script slot="head" type="application/ld+json" set:html={JSON.stringify(profile).replace(/</g, '\\u003c')} />
 	<main class="dog-detail">
 		<a class="dog-detail__back" href="/">&larr; All dogs</a>
 		<article>

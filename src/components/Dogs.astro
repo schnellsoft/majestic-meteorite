@@ -1,0 +1,126 @@
+---
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+type Dog = {
+	name: string;
+	age: number;
+	race: string;
+	health: string;
+};
+
+const dogsFile = resolve(process.cwd(), 'public/dogs.json');
+const dogs = JSON.parse(readFileSync(dogsFile, 'utf8')) as Dog[];
+---
+
+<section class="dogs" aria-labelledby="dogs-heading">
+	<header class="dogs__header">
+		<p class="dogs__eyebrow">Meet the pack</p>
+		<h2 id="dogs-heading">Our dogs</h2>
+		<p class="dogs__summary">A little snapshot of each dog's personality and wellbeing.</p>
+	</header>
+	<ul class="dogs__list" aria-label="Dog profiles">
+		{dogs.map((dog) => (
+			<li class="dogs__item">
+				<div class="dogs__name-row">
+					<h3 class="dogs__name">{dog.name}</h3>
+					<span class="dogs__age">{dog.age} {dog.age === 1 ? 'year' : 'years'}</span>
+				</div>
+				<p class="dogs__breed">{dog.race}</p>
+				<p class="dogs__health">{dog.health}</p>
+			</li>
+		))}
+	</ul>
+</section>
+
+<style>
+	.dogs {
+		--ink: #182a28;
+		--muted: #596963;
+		--leaf: #315d4d;
+		--paper: #f5f7f1;
+		--line: #d9e1d8;
+		max-width: 1120px;
+		margin: 0 auto;
+		padding: clamp(2rem, 6vw, 5rem) 1.25rem;
+		color: var(--ink);
+		font-family: Georgia, 'Times New Roman', serif;
+	}
+
+	.dogs__header {
+		margin-bottom: 2rem;
+	}
+
+	.dogs__eyebrow {
+		margin: 0 0 0.5rem;
+		color: var(--leaf);
+		font: 700 0.75rem/1.4 system-ui, sans-serif;
+		text-transform: uppercase;
+	}
+
+	.dogs h2 {
+		margin: 0;
+		font-size: 3.5rem;
+		font-weight: 500;
+		line-height: 1.05;
+	}
+
+	.dogs__summary {
+		max-width: 38rem;
+		margin: 0.75rem 0 0;
+		color: var(--muted);
+		font: 1rem/1.6 system-ui, sans-serif;
+	}
+
+	.dogs__list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+		gap: 1px;
+		margin: 0;
+		padding: 1px;
+		background: var(--line);
+		list-style: none;
+	}
+
+	.dogs__item {
+		min-width: 0;
+		padding: 1.25rem;
+		background: var(--paper);
+	}
+
+	.dogs__name-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
+
+	.dogs__name {
+		margin: 0;
+		font-size: 1.4rem;
+		font-weight: 500;
+	}
+
+	.dogs__age {
+		flex: none;
+		color: var(--leaf);
+		font: 700 0.78rem/1.4 system-ui, sans-serif;
+	}
+
+	.dogs__breed {
+		margin: 0.4rem 0 0;
+		color: var(--muted);
+		font: 700 0.78rem/1.4 system-ui, sans-serif;
+	}
+
+	.dogs__health {
+		margin: 0.9rem 0 0;
+		font: 0.95rem/1.55 system-ui, sans-serif;
+	}
+
+	@media (max-width: 600px) {
+		.dogs h2 {
+			font-size: 2.25rem;
+		}
+	}
+</style>

@@ -1,0 +1,182 @@
+[
+  {
+    "name": "Luna",
+    "age": 3,
+    "race": "Labrador Retriever",
+    "health": "Healthy, energetic, and up to date on vaccinations."
+  },
+  {
+    "name": "Milo",
+    "age": 5,
+    "race": "Beagle",
+    "health": "Good overall health; enjoys regular walks."
+  },
+  {
+    "name": "Bella",
+    "age": 2,
+    "race": "Golden Retriever",
+    "health": "Healthy with a shiny coat and a hearty appetite."
+  },
+  {
+    "name": "Charlie",
+    "age": 7,
+    "race": "French Bulldog",
+    "health": "In good health; benefits from moderate exercise."
+  },
+  {
+    "name": "Daisy",
+    "age": 4,
+    "race": "Poodle",
+    "health": "Healthy and active; routine grooming keeps her coat in shape."
+  },
+  {
+    "name": "Rocky",
+    "age": 6,
+    "race": "German Shepherd",
+    "health": "Good condition with regular activity and checkups."
+  },
+  {
+    "name": "Coco",
+    "age": 1,
+    "race": "Dachshund",
+    "health": "Healthy young dog; weight is monitored to support back health."
+  },
+  {
+    "name": "Max",
+    "age": 8,
+    "race": "Boxer",
+    "health": "Doing well; receives regular wellness examinations."
+  },
+  {
+    "name": "Ruby",
+    "age": 3,
+    "race": "Border Collie",
+    "health": "Healthy and alert; needs plenty of daily activity."
+  },
+  {
+    "name": "Teddy",
+    "age": 5,
+    "race": "Shih Tzu",
+    "health": "Good health; ears and coat are checked during grooming."
+  },
+  {
+    "name": "Rosie",
+    "age": 9,
+    "race": "Cocker Spaniel",
+    "health": "Comfortable and active; has routine senior wellness checks."
+  },
+  {
+    "name": "Cooper",
+    "age": 2,
+    "race": "Australian Shepherd",
+    "health": "Healthy and energetic with a balanced diet."
+  },
+  {
+    "name": "Molly",
+    "age": 6,
+    "race": "Pembroke Welsh Corgi",
+    "health": "Good overall health; maintains a healthy weight."
+  },
+  {
+    "name": "Buddy",
+    "age": 4,
+    "race": "Siberian Husky",
+    "health": "Healthy and fit; enjoys daily exercise."
+  },
+  {
+    "name": "Nala",
+    "age": 3,
+    "race": "Mixed Breed",
+    "health": "Healthy, vaccinated, and full of energy."
+  },
+  {
+    "name": "Oliver",
+    "age": 10,
+    "race": "Chihuahua",
+    "health": "Doing well for his age; gets regular dental and wellness checks."
+  },
+  {
+    "name": "Penny",
+    "age": 2,
+    "race": "Boston Terrier",
+    "health": "Healthy and playful; rests comfortably after exercise."
+  },
+  {
+    "name": "Finn",
+    "age": 5,
+    "race": "Whippet",
+    "health": "Good health and lean condition; enjoys short bursts of running."
+  },
+  {
+    "name": "Maggie",
+    "age": 7,
+    "race": "Basset Hound",
+    "health": "Stable health; ears are checked and cleaned routinely."
+  },
+  {
+    "name": "Archie",
+    "age": 1,
+    "race": "Pomeranian",
+    "health": "Healthy puppy with routine vaccinations underway."
+  },
+  {
+    "name": "Willow",
+    "age": 4,
+    "race": "Great Dane",
+    "health": "Healthy and growing well; meals are paced and measured."
+  },
+  {
+    "name": "Henry",
+    "age": 8,
+    "race": "Schnauzer",
+    "health": "In good condition; receives regular dental care."
+  },
+  {
+    "name": "Lola",
+    "age": 3,
+    "race": "Maltese",
+    "health": "Healthy and lively; coat and eyes are checked regularly."
+  },
+  {
+    "name": "Jasper",
+    "age": 6,
+    "race": "Shiba Inu",
+    "health": "Good overall health with a steady appetite."
+  },
+  {
+    "name": "Maple",
+    "age": 2,
+    "race": "Cavalier King Charles Spaniel",
+    "health": "Healthy and cheerful; has routine veterinary checkups."
+  },
+  {
+    "name": "Buster",
+    "age": 11,
+    "race": "Jack Russell Terrier",
+    "health": "Active senior; mobility and comfort are monitored."
+  },
+  {
+    "name": "Ivy",
+    "age": 5,
+    "race": "Dalmatian",
+    "health": "Healthy and athletic; has regular checkups and fresh water."
+  },
+  {
+    "name": "Simba",
+    "age": 4,
+    "race": "Akita",
+    "health": "Good health; enjoys calm walks and routine care."
+  },
+  {
+    "name": "Poppy",
+    "age": 7,
+    "race": "Bichon Frise",
+    "health": "Healthy and sociable; keeps a regular grooming schedule."
+  },
+  {
+    "name": "Murphy",
+    "age": 3,
+    "race": "Staffordshire Bull Terrier",
+    "health": "Healthy, muscular, and active with routine wellness care."
+  }
+]

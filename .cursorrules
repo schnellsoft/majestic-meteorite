@@ -1,0 +1,27 @@
+# Front-End Code Guidelines: Technical SEO & Core Web Vitals
+
+You must strictly adhere to these Technical SEO constraints when writing, refactoring, or reviewing front-end code in this repository.
+
+## 1. Semantic HTML & DOM Structure
+
+- **Interactive Elements:** Use native `<button>` or `<a href="...">` for clicks. Never attach click event listeners to `<div>` or `<span>`.
+- **Layout Landmarks:** Wrap page regions in `<main>`, `<header>`, `<footer>`, `<nav>`, `<article>`, and `<section>`.
+- **Heading Hierarchy:** Max of one `<h1>` per page. Subheadings must follow a strict sequential order (`<h2>` -> `<h3>` -> `<h4>`). Never skip levels.
+
+## 2. Image Optimization (Core Web Vitals - CLS)
+
+- **Dimensions:** Every `<img>` tag must have explicit `width` and `height` attributes (or framework equivalents like Next.js `<Image>`) to prevent Cumulative Layout Shift (CLS).
+- **Accessibility:** Mandatory descriptive `alt` text. No empty `alt=""` unless the image is strictly decorative.
+- **Loading:** Default to `loading="lazy"` for below-the-fold images, and `loading="eager"` / `fetchpriority="high"` for hero images.
+
+## 3. Metadata & Server-Side Readiness
+
+- **Head Requirements:** Ensure components or pages allow dynamic injection of:
+  - `<title>` (Target: 50-60 characters)
+  - `<meta name="description">` (Target: 130-155 characters)
+  - `<link rel="canonical" href="...">`
+- **Scraping Compliance:** Write code that functions cleanly with Server-Side Rendering (SSR) or Static Site Generation (SSG). Avoid hiding main textual content behind client-side dynamic states that load post-hydration.
+
+## 4. Structured Data
+
+- Include clean hooks or helper functions to output valid **JSON-LD Schema** (e.g., Organization, Article, or Product schema) where content types demand it.

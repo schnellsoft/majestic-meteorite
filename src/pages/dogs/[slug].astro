@@ -6,8 +6,9 @@ type Props = {
 	dog: Dog;
 };
 
-export function getStaticPaths() {
-	return loadDogs().map((dog) => ({
+export async function getStaticPaths() {
+	const dogs = await loadDogs();
+	return dogs.map((dog) => ({
 		params: { slug: dogSlug(dog.name) },
 		props: { dog },
 	}));

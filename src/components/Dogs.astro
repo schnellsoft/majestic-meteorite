@@ -1,7 +1,7 @@
 ---
 import { dogSlug, loadDogs } from '../data/dogs';
 
-const dogs = loadDogs();
+const dogs = await loadDogs();
 const itemList = {
 	'@context': 'https://schema.org',
 	'@type': 'ItemList',

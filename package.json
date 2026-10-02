@@ -15,12 +15,14 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.3",
+    "@aws-sdk/client-s3": "^3.1145.0",
     "astro": "^7.3.5"
   },
   "allowScripts": {
     "esbuild": true
   },
   "devDependencies": {
+    "@types/node": "^26.6.4",
     "wrangler": "^4.145.0"
   }
 }

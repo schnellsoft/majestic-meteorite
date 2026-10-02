@@ -106,20 +106,16 @@ During `astro build`:
 
 ## 7. This repository: Cloudflare deployment and JSON updates
 
-This project is a static Astro site. `src/components/Dogs.astro` reads
-`public/dogs.json` during the build, and `npm run build` writes the static site
-to `dist/`. The `package.json` requires Node.js 22.12.0 or newer. The JSON must
-be present before `astro build` runs because Astro embeds its current data in the
-generated pages.
-
-### JSON in this Astro repository
-
-Connect this Git repository to Cloudflare Pages. Set the production branch to
-`main`, the build command to `npm run build`, and the build output directory to
-`dist`. Set `NODE_VERSION` to `22.12.0` or a newer supported Node.js 22 release.
-Save and deploy. A commit that changes `public/dogs.json` will automatically
-rebuild and publish the site, so no webhook or Astro Cloudflare adapter is
-needed for this static site.
+This project is a static Astro site. During the build, `src/data/dogs.ts`
+fetches the private `dogs.json` object from the R2 bucket named `data` using
+Cloudflare's S3-compatible API. `npm run build` writes the generated site to
+`dist/`. The `package.json` requires Node.js 22.12.0 or newer. Workers Builds
+needs `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, and
+`R2_SECRET_ACCESS_KEY`; grant the token read-only access to the `data` bucket.
+Store the access key and secret as build secrets. The credentials are used only
+by the build and are not sent to site visitors. Deploy with build command
+`npm run build` and deploy command `npx wrangler deploy`. An R2 data change is
+published after the next successful build and deploy.
 
 Astro's current Cloudflare guide recommends Workers for new projects. Pages is
 still an option for static output and supplies the Deploy Hooks described here.
@@ -216,27 +212,16 @@ static rebuild so the published site matches the new data.
 
 ### 9.1 Current repo behavior (important)
 
-Today `Dogs.astro` and `src/pages/dogs/[slug].astro` read a **local** file:
+`Dogs.astro` and `src/pages/dogs/[slug].astro` load the same R2 object during
+the build:
 
 ```text
-public/dogs.json  (read with Node fs during astro build)
+R2 bucket `data`, object key `dogs.json` (read with the S3 API during astro build)
 ```
 
-A Deploy Hook alone does **not** pull data from R2. The build must either:
-
-1. **Fetch `dogs.json` from R2 at build time** (recommended for PWA/R2), or
-2. Keep writing `public/dogs.json` in Git (then a commit rebuilds; no R2 needed).
-
-For the PWA + R2 design, switch the Astro sources to `fetch()` the public R2
-URL (or a custom domain on the bucket) before generating pages, for example:
-
-```js
-const res = await fetch("https://assets.yourdomain.com/data/dogs.json");
-if (!res.ok) throw new Error(`dogs.json fetch failed: ${res.status}`);
-const dogs = await res.json();
-```
-
-Use the same fetch in both the list component and `getStaticPaths()`.
+A deploy hook only starts a build; the build's R2 credentials let it fetch the
+latest object. No public bucket URL is required. Local `public/dogs.json` is
+not used as a fallback.
 
 ### 9.2 End-to-end flow
 
@@ -247,7 +232,7 @@ PWA (edit dogs + media)
       v
 Upload Worker (or authenticated API)
       |
-      | PutObject: data/dogs.json (+ media/* if needed)
+      | PutObject: dogs.json (+ media/* if needed)
       v
 Cloudflare R2 bucket
       |
@@ -265,15 +250,12 @@ Static site on Cloudflare CDN
 
 #### A. Create the R2 bucket and object layout
 
-1. In Cloudflare Dashboard → **R2** → Create bucket (e.g. `site-content`).
-2. Organize prefixes, for example:
-   - `data/dogs.json`
-   - `media/`, `icons/`, `videos/`
-3. Expose read access for the **build** (pick one):
-   - **Public bucket** or **custom domain** on R2 (simplest for `fetch()`), or
-   - Private bucket + S3 credentials as **build secrets** (more secure).
-4. Create an R2 API token with least privilege (write for the upload Worker;
-   read-only for the Astro build if using the S3 SDK).
+1. Use the existing R2 bucket `data` and upload the JSON with object key
+   `dogs.json` (at the bucket root).
+2. Create an R2 API token with read-only access to bucket `data` for the build.
+3. Add `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, and
+   `R2_SECRET_ACCESS_KEY` to Workers Builds; store the access key and secret as
+   secrets. A public bucket or custom domain is not needed.
 
 #### B. Put the Astro repo on Cloudflare (hosting + builds)
 
@@ -289,7 +271,7 @@ valid for static sites and still provides Deploy Hooks.
    - Build command: `npm run build`
    - Build output / directory: `dist`
    - Environment variable: `NODE_VERSION=22.12.0` (or newer Node 22)
-4. Save and Deploy. First build should succeed with current `public/dogs.json`.
+4. Save and deploy. The build reads the current R2 object.
 5. Project Settings → **Builds & deployments** → **Deploy Hooks**:
    - Create hook for `main`, copy the URL.
    - Treat that URL as a secret.
@@ -309,8 +291,8 @@ curl -X POST "https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/<
   "name": "majestic-meteorite",
   "compatibility_date": "2026-10-01",
   "assets": {
-    "directory": "./dist"
-  }
+    "directory": "./dist",
+  },
 }
 ```
 
@@ -328,12 +310,10 @@ curl -X POST "https://api.cloudflare.com/client/v4/workers/builds/deploy_hooks/<
 
 #### C. Wire Astro to read `dogs.json` from R2 at build time
 
-1. Upload a starter `data/dogs.json` to R2 (copy of current `public/dogs.json`).
-2. Change build-time reads from `readFileSync('public/dogs.json')` to `fetch(R2_URL)`.
-3. Optionally keep a local `public/dogs.json` only for offline `astro dev`, or
-   point `astro.dev` at the same public URL.
-4. In Pages/Workers build settings, add any needed env vars (e.g.
-   `DOGS_JSON_URL=https://assets.yourdomain.com/data/dogs.json`).
+1. Store the JSON as object key `dogs.json` in bucket `data`.
+2. Add the three R2 build variables listed above to Workers Builds.
+3. Build and deploy. Missing credentials, a missing object, or invalid JSON
+   fails the build rather than publishing stale local data.
 
 #### D. PWA upload path (do not put write credentials in the browser)
 
@@ -349,7 +329,7 @@ upload gateway:
 Minimal Worker sketch after a successful R2 write:
 
 ```js
-await env.SITE_BUCKET.put("data/dogs.json", JSON.stringify(dogs), {
+await env.SITE_BUCKET.put("dogs.json", JSON.stringify(dogs), {
   httpMetadata: { contentType: "application/json" },
 });
 await fetch(env.DEPLOY_HOOK_URL, { method: "POST" });
@@ -376,19 +356,20 @@ If several clients write to R2:
 
 ### 9.4 What goes where
 
-| Asset | Store in | Consumed by |
-| --- | --- | --- |
-| `dogs.json` | R2 `data/dogs.json` | Astro at **build** time |
-| Images / SVG / video | R2 `media/` etc. | Public URLs in HTML, or download into Astro assets if optimizing |
-| Astro source (`.astro`, CSS) | Git repo | Cloudflare Pages / Workers Builds |
-| Deploy Hook URL | Worker / CI secret | Upload Worker or Queue consumer only |
-| R2 write credentials | Worker secrets | Upload Worker only — never the PWA |
+| Asset                        | Store in                          | Consumed by                                                      |
+| ---------------------------- | --------------------------------- | ---------------------------------------------------------------- |
+| `dogs.json`                  | R2 bucket `data`, key `dogs.json` | Astro at **build** time                                          |
+| Images / SVG / video         | R2 `media/` etc.                  | Public URLs in HTML, or download into Astro assets if optimizing |
+| Astro source (`.astro`, CSS) | Git repo                          | Cloudflare Pages / Workers Builds                                |
+| Deploy Hook URL              | Worker / CI secret                | Upload Worker or Queue consumer only                             |
+| R2 write credentials         | Worker secrets                    | Upload Worker only — never the PWA                               |
 
 ### 9.5 Security reminders for the PWA path
 
 - Never embed R2 write tokens or the Deploy Hook URL in the PWA bundle.
 - Authenticate every upload; rate-limit and validate JSON.
-- Prefer read-only public URLs (or signed reads) for the Astro build.
+- Use a read-only R2 API token for the Astro build; keep its credentials in
+  Workers Builds secrets.
 - Scope API tokens to one bucket and required operations.
 - Deduplicate rebuilds if the PWA saves often (Workers Builds Deploy Hooks
   can skip redundant queued builds; you can also debounce in the Worker).
